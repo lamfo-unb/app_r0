@@ -1,0 +1,353 @@
+COD_MUN;NOME_MUN;QTDE_Hospit
+350010;Adamantina;45
+350050;Águas de Lindóia;22
+350070;Agudos;22
+350100;Altinópolis;9
+350110;Alto Alegre;12
+350130;Álvares Machado;14
+350160;Americana;108
+350170;Américo Brasiliense;72
+350190;Amparo;50
+350210;Andradina;69
+350220;Angatuba;27
+350250;Aparecida;24
+350260;Aparecida d'Oeste;14
+350270;Apiaí;16
+350280;Araçatuba;113
+350290;Araçoiaba da Serra;3
+350310;Arandu;5
+350320;Araraquara;204
+350330;Araras;98
+350340;Arealva;26
+350380;Artur Nogueira;18
+350390;Arujá;26
+350400;Assis;91
+350410;Atibaia;77
+350420;Auriflama;22
+350450;Avaré;68
+350490;Bananal;7
+350520;Bariri;21
+350530;Barra Bonita;35
+350550;Barretos;205
+350570;Barueri;155
+350580;Bastos;16
+350590;Batatais;46
+350600;Bauru;515
+350610;Bebedouro;64
+350630;Bernardino de Campos;17
+350635;Bertioga;15
+350640;Bilac;20
+350650;Birigui;61
+350670;Boa Esperança do Sul;6
+350680;Bocaina;20
+350700;Boituva;15
+350710;Bom Jesus dos Perdões;8
+350740;Borborema;11
+350750;Botucatu;238
+350760;Bragança Paulista;130
+350790;Brotas;19
+350810;Buritama;17
+350840;Cabreúva;6
+350850;Caçapava;115
+350860;Cachoeira Paulista;16
+350870;Caconde;14
+350880;Cafelândia;23
+350900;Caieiras;48
+350920;Cajamar;24
+350930;Cajobi;16
+350940;Cajuru;38
+350950;Campinas;1141
+350960;Campo Limpo Paulista;16
+350970;Campos do Jordão;28
+351000;Cândido Mota;9
+351020;Capão Bonito;14
+351030;Capela do Alto;59
+351040;Capivari;29
+351050;Caraguatatuba;71
+351060;Carapicuíba;78
+351070;Cardoso;13
+351080;Casa Branca;24
+351100;Castilho;13
+351110;Catanduva;219
+351130;Cedral;30
+351140;Cerqueira César;25
+351150;Cerquilho;13
+351160;Cesário Lange;14
+351170;Charqueada;17
+355720;Chavantes;38
+351190;Clementina;12
+351200;Colina;19
+351210;Colômbia;6
+351220;Conchal;19
+351230;Conchas;10
+351260;Coronel Macedo;6
+351280;Cosmópolis;20
+351300;Cotia;372
+351310;Cravinhos;11
+351340;Cruzeiro;48
+351350;Cubatão;47
+351360;Cunha;21
+351370;Descalvado;18
+351380;Diadema;287
+351390;Divinolândia;25
+351410;Dois Córregos;29
+351430;Dourado;6
+351440;Dracena;78
+351450;Duartina;42
+351480;Eldorado;2
+351490;Elias Fausto;6
+351500;Embu das Artes;65
+351510;Embu-Guaçu;12
+351518;Espírito Santo do Pinhal;53
+351520;Estrela d'Oeste;43
+351540;Fartura;8
+351550;Fernandópolis;71
+351570;Ferraz de Vasconcelos;62
+351600;Flórida Paulista;25
+351620;Franca;234
+351630;Francisco Morato;15
+351640;Franco da Rocha;70
+351660;Gália;24
+351670;Garça;27
+351690;General Salgado;26
+351700;Getulina;38
+351740;Guaíra;24
+351760;Guapiara;12
+351770;Guará;24
+351780;Guaraçaí;19
+351820;Guararapes;39
+351830;Guararema;22
+351840;Guaratinguetá;148
+351860;Guariba;15
+351870;Guarujá;170
+351880;Guarulhos;521
+351900;Herculândia;49
+351907;Hortolândia;29
+351910;Iacanga;15
+351930;Ibaté;10
+351940;Ibirá;15
+351960;Ibitinga;38
+351970;Ibiúna;17
+351990;Iepê;10
+352010;Igarapava;36
+352020;Igaratá;8
+352030;Iguape;9
+352044;Ilha Solteira;43
+352040;Ilhabela;16
+352050;Indaiatuba;58
+352070;Indiaporã;24
+352090;Ipaussu;23
+352100;Iperó;13
+352130;Ipuã;35
+352140;Iracemápolis;2
+352170;Itaberá;6
+352180;Itaí;18
+352190;Itajobi;46
+352210;Itanhaém;35
+352220;Itapecerica da Serra;106
+352230;Itapetininga;61
+352240;Itapeva;58
+352250;Itapevi;101
+352260;Itapira;42
+352270;Itápolis;44
+352280;Itaporanga;25
+352290;Itapuí;16
+352310;Itaquaquecetuba;54
+352320;Itararé;33
+352340;Itatiba;43
+352350;Itatinga;12
+352360;Itirapina;8
+352390;Itu;52
+352400;Itupeva;21
+352410;Ituverava;50
+352420;Jaborandi;8
+352430;Jaboticabal;49
+352440;Jacareí;170
+352450;Jaci;20
+352470;Jaguariúna;27
+352480;Jales;95
+352500;Jandira;4
+352520;Jarinu;18
+352530;Jaú;325
+352550;Joanópolis;9
+352570;José Bonifácio;19
+352590;Jundiaí;302
+352600;Junqueirópolis;22
+352620;Juquitiba;53
+352640;Laranjal Paulista;22
+352670;Leme;41
+352680;Lençóis Paulista;39
+352690;Limeira;114
+352710;Lins;55
+352720;Lorena;86
+352730;Louveira;12
+352740;Lucélia;15
+352770;Luiziânia;3
+352800;Macatuba;18
+352810;Macaubal;16
+352850;Mairiporã;19
+352880;Maracaí;14
+352900;Marília;278
+352920;Martinópolis;18
+352930;Matão;89
+352940;Mauá;163
+352970;Miguelópolis;11
+352980;Mineiros do Tietê;7
+353010;Mirandópolis;31
+353030;Mirassol;35
+353050;Mococa;73
+353060;Mogi das Cruzes;262
+353070;Mogi Guaçu;136
+353080;Mogi Mirim;50
+353110;Mongaguá;12
+353130;Monte Alto;45
+353140;Monte Aprazível;49
+353150;Monte Azul Paulista;32
+353180;Monte Mor;5
+353190;Morro Agudo;17
+353200;Morungaba;13
+353240;Nazaré Paulista;11
+353250;Neves Paulista;21
+353260;Nhandeara;35
+353290;Nova Europa;6
+353300;Nova Granada;52
+353340;Nova Odessa;17
+353350;Novo Horizonte;46
+353390;Olímpia;31
+353430;Orlândia;36
+353440;Osasco;395
+353460;Osvaldo Cruz;39
+353470;Ourinhos;54
+353475;Ouroeste;16
+353490;Pacaembu;17
+353520;Palmeira d'Oeste;11
+353530;Palmital;24
+353540;Panorama;19
+353550;Paraguaçu Paulista;34
+353580;Paranapanema;16
+353600;Parapuã;25
+353620;Pariquera-Açu;35
+353630;Patrocínio Paulista;16
+353650;Paulínia;32
+353660;Paulo de Faria;11
+353670;Pederneiras;38
+353700;Pedregulho;43
+353710;Pedreira;46
+353730;Penápolis;80
+353740;Pereira Barreto;22
+353780;Piedade;27
+353790;Pilar do Sul;19
+353800;Pindamonhangaba;100
+353860;Piracaia;15
+353870;Piracicaba;306
+353880;Piraju;35
+353890;Pirajuí;14
+353900;Pirangi;11
+353930;Pirassununga;38
+353940;Piratininga;24
+353950;Pitangueiras;20
+353980;Poá;27
+354000;Pompéia;9
+354020;Pontal;10
+354040;Populina;14
+354060;Porto Feliz;20
+354070;Porto Ferreira;22
+354080;Potirendaba;19
+354100;Praia Grande;81
+354120;Presidente Bernardes;36
+354130;Presidente Epitácio;36
+354140;Presidente Prudente;414
+354150;Presidente Venceslau;39
+354160;Promissão;14
+354190;Queluz;16
+354220;Rancharia;38
+354240;Regente Feijó;7
+354260;Registro;70
+354290;Ribeirão Bonito;8
+354300;Ribeirão Branco;16
+354330;Ribeirão Pires;76
+354340;Ribeirão Preto;789
+354380;Rinópolis;15
+354390;Rio Claro;90
+354400;Rio das Pedras;17
+354420;Riolândia;17
+354425;Rosana;24
+354430;Roseira;49
+354490;Sales Oliveira;16
+354500;Salesópolis;13
+354520;Salto;45
+354530;Salto de Pirapora;20
+354540;Salto Grande;20
+354560;Santa Adélia;13
+354580;Santa Bárbara d'Oeste;109
+354630;Santa Cruz das Palmeiras;14
+354640;Santa Cruz do Rio Pardo;31
+354660;Santa Fé do Sul;30
+354680;Santa Isabel;30
+354690;Santa Lúcia;8
+354700;Santa Maria da Serra;6
+354750;Santa Rita do Passa Quatro;26
+354760;Santa Rosa de Viterbo;20
+354730;Santana de Parnaíba;14
+354770;Santo Anastácio;28
+354780;Santo André;723
+354790;Santo Antônio da Alegria;13
+354850;Santos;735
+354860;São Bento do Sapucaí;18
+354870;São Bernardo do Campo;550
+354880;São Caetano do Sul;442
+354890;São Carlos;196
+354910;São João da Boa Vista;106
+354940;São Joaquim da Barra;46
+354970;São José do Rio Pardo;57
+354980;São José do Rio Preto;552
+354990;São José dos Campos;520
+355000;São Luís do Paraitinga;16
+355010;São Manuel;14
+355020;São Miguel Arcanjo;35
+355030;São Paulo;10778
+355040;São Pedro;14
+355060;São Roque;38
+355070;São Sebastião;53
+355080;São Sebastião da Grama;22
+355090;São Simão;11
+355100;São Vicente;149
+355160;Serra Negra;19
+355150;Serrana;64
+355170;Sertãozinho;34
+355200;Silveiras;1
+355210;Socorro;32
+355220;Sorocaba;502
+355230;Sud Mennucci;9
+355240;Sumaré;45
+355250;Suzano;51
+355260;Tabapuã;17
+355270;Tabatinga;16
+355280;Taboão da Serra;160
+355300;Taguaí;12
+355320;Taiúva;4
+355330;Tambaú;16
+355340;Tanabi;39
+355360;Tapiratiba;9
+355370;Taquaritinga;70
+355380;Taquarituba;20
+355400;Tatuí;32
+355410;Taubaté;154
+355430;Teodoro Sampaio;35
+355440;Terra Roxa;20
+355450;Tietê;22
+355470;Torrinha;12
+355500;Tupã;94
+355510;Tupi Paulista;26
+355540;Ubatuba;28
+355580;Urânia;26
+355600;Urupês;25
+355620;Valinhos;68
+355630;Valparaíso;25
+355640;Vargem Grande do Sul;26
+355650;Várzea Paulista;31
+355670;Vinhedo;38
+355680;Viradouro;24
+355700;Votorantim;143
+355710;Votuporanga;83
+; ;
