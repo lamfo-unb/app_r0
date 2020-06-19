@@ -44,16 +44,21 @@ pop <- read_excel("bases/estimativa_dou_2019.xls", sheet = "Municípios",skip = 
 
 
 # Identificação estado e capital
-#  cod.state <- 33
-#  state.char <- "RJ"
-#  cod.capital <- 3304557
-# cod.state <- 35
-# state.char <- "SP"
-# cod.capital <- 3550308
+cod.state <- 33
+state.char <- "RJ"
+cod.capital <- 3304557
+ cod.state <- 35
+ state.char <- "SP"
+ cod.capital <- 3550308
+#cod.state <- 26
+#state.char <- "PE"
+#cod.capital <- 	2611606
 
-cod.state <- 26
-state.char <- "PE"
-cod.capital <- 	2611606
+cod.state <- 23
+state.char <- "CE"
+cod.capital <- 	2304400
+
+
 
 covidmun <-  base %>%
   filter(state==state.char)
@@ -74,11 +79,11 @@ no_axis <- theme(axis.title=element_blank(),
                  axis.ticks=element_blank())
 
 
+
 shapefilesp <- shapefile %>%
   left_join(covidmun %>% filter(is_last==T) %>%
               dplyr::select(newCases,confirmed=totalCases,newDeaths,deaths,ibgeID),
             by = c("code_muni"='ibgeID'))
-
 
 
 
@@ -128,7 +133,7 @@ shprodoviasspsp <-  shprodoviassp %>%
 munbrsp<- shapefilesp %>% 
   filter(code_muni %in% unique(shprodoviasspsp$code_muni))
 
-# Mapa 1: BR e municípios diratetamente ligados À SP
+# Mapa 1: BR e municípios diratetamente ligados À Capital
 mapa1 <- ggplot()+
   geom_sf(data=shapefileuf)+
   geom_sf(data=munbrsp,col="orange")+
@@ -173,15 +178,15 @@ shapefilesp$levelper <- cut((shapefilesp$confirmed/shapefilesp$npop2019)*10^5,br
 
 # Mapa 3: todos os municípios indiretamente ligados À SP
 
-# mapa3 <- ggplot()+
-#   geom_sf(data=shapefileuf)+
-#   geom_sf(data=shapefilesp,col="gray75",aes(fill=levelper))+
-#   geom_sf(data=munbrsp,col="orange")+
-#   geom_sf(data=munbrsp_2,col="blue")+
-#   geom_sf(data=shapefilesp,col="gray75",aes(fill=levelper))+
-#   geom_sf(data=shprodoviassp,col="gray50",size=1.1)+
-#   geom_sf(data=shprodoviasspsp,col="red",size=1.2)+
-#   geom_sf(data=shprodoviasspsp_2,col="darkblue",size=1.2)
+ # mapa3 <- ggplot()+
+ #   geom_sf(data=shapefileuf)+
+ #   geom_sf(data=shapefilesp,col="gray75",aes(fill=levelper))+
+ #   geom_sf(data=munbrsp,col="orange")+
+ #   geom_sf(data=munbrsp_2,col="blue")+
+ #   geom_sf(data=shapefilesp,col="gray75",aes(fill=levelper))+
+ #   geom_sf(data=shprodoviassp,col="gray50",size=1.1)+
+ #   geom_sf(data=shprodoviasspsp,col="red",size=1.2)+
+ #   geom_sf(data=shprodoviasspsp_2,col="darkblue",size=1.2)
 
 vec_per <- (shapefilesp$deaths/shapefilesp$npop2019)*10^5
 vec_per<-vec_per[vec_per>0]
@@ -190,15 +195,15 @@ shapefilesp$levelpermorte <- cut((shapefilesp$deaths/shapefilesp$npop2019)*10^5,
 
 # Mapa 3: todos os municípios indiretamente ligados À SP
 
-mapa4 <- ggplot()+
-  geom_sf(data=shapefileuf)+
-  geom_sf(data=shapefilesp,col="gray75",aes(fill=levelpermorte))+
-  geom_sf(data=munbrsp,col="orange")+
-  geom_sf(data=munbrsp_2,col="blue")+
-  geom_sf(data=shapefilesp,col="gray75",aes(fill=levelpermorte))+
-  geom_sf(data=shprodoviassp,col="gray50",size=1.1)+
-  geom_sf(data=shprodoviasspsp,col="red",size=1.2)+
-  geom_sf(data=shprodoviasspsp_2,col="darkblue",size=1.2)
+# mapa4 <- ggplot()+
+#   geom_sf(data=shapefileuf)+
+#   geom_sf(data=shapefilesp,col="gray75",aes(fill=levelpermorte))+
+#   geom_sf(data=munbrsp,col="orange")+
+#   geom_sf(data=munbrsp_2,col="blue")+
+#   geom_sf(data=shapefilesp,col="gray75",aes(fill=levelpermorte))+
+#   geom_sf(data=shprodoviassp,col="gray50",size=1.1)+
+#   geom_sf(data=shprodoviasspsp,col="red",size=1.2)+
+#   geom_sf(data=shprodoviasspsp_2,col="darkblue",size=1.2)
 
 baseunica <- shapefilesp %>%  data.frame() %>% dplyr::select(code_muni) %>% unique() %>%
   left_join(shprodoviassp %>%  mutate(tem_rodo=1) %>% data.frame() %>% dplyr::select(code_muni,tem_rodo) %>% unique(),
@@ -237,6 +242,7 @@ shapefilesp <- shapefilesp %>%
             by = "code_muni")
 
 
+
 mapa5<-ggplot() +
   geom_sf(data=shapefileuf, color= "gray85", size=.15)+
   geom_sf(data=shapefilesp,color = "gray85",
@@ -247,27 +253,25 @@ mapa5<-ggplot() +
   geom_sf(data=shprodoviassp ,col="red")+
   geom_text(data = shapefilesp%>% filter(tem_rodo_2==1),
             aes(X, Y, label = confirmed) ,size = 1.1) +
-  labs(subtitle="Confirmed cases at 14th april", size=8)+
+  labs(subtitle="Confirmed cases at 2th june", size=8)+
   theme_minimal() 
 
-
+mapa5
 ggsave(paste0("resultados/",state.char,"_Casos.pdf"),height = 8,width = 12)
 
 
-mapa5 <- ggplot()+
+mapa5.1 <- ggplot()+
   geom_sf(data=shapefilesp,
-          aes(fill=(deaths/npop2019)*10^5),size=.05,
-          color = ifelse(shapefilesp$code_muni %in% munbrsp$code_muni,
-                         "orange","gray85"))+
+          aes(fill=(deaths/npop2019)*10^5),size=.05)+
   scale_fill_distiller(palette = "Blues",
-                       name=NULL,
+                       name="Deaths per 100K",
                        direction = 1)+
-  geom_sf(data=shprodoviasspsp,col="red")+
+  geom_sf(data=shprodoviassp,col="red")+
   geom_text(data = shapefilesp%>% filter(tem_rodo_2==1),
             aes(X, Y, label = deaths) ,size = 1.1) +
   theme_minimal() 
 
-mapa5
+mapa5.1
 ggsave(paste0("resultados/",state.char,"_mortes.pdf"),height = 8,width = 12)
 
 
@@ -307,6 +311,7 @@ neighbors_sf <- st_set_crs(neighbors_sf, st_crs(shapefilesp))
 neighbors<-nb2listw(neighbors,
                     style="W",
                     zero.policy=TRUE)
+print(neighbors, zero.policy=TRUE)
 
 mapa6 <- ggplot(shapefilesp) + 
   geom_sf(fill = 'salmon', color = 'white') +
@@ -315,7 +320,7 @@ mapa6 <- ggplot(shapefilesp) +
   ylab("Latitude") +
   xlab("Longitude")
 
-# Loop modelo ----
+# Loop 1 modelo ----
 
 
 dat_it <-as.Date((unique(covidmun$date)))[1]
@@ -323,8 +328,8 @@ paras_full <- NULL
 AICs_TOTAL_full <- NULL
 forcasts_temp_full <- NULL
 dat_it_vec <- as.Date((unique(covidmun$date)))
-dat_it_vec <- dat_it_vec[month(dat_it_vec)==4]
-
+dat_it_vec <- dat_it_vec[month(dat_it_vec)>=4]
+#dat_it_vec <- dat_it_vec[-2]
 dat_it<-dat_it_vec[1]  
 for(dat_it in dat_it_vec){
   base_final <- covidmun %>% #filter(place_type!="state")%>% 
@@ -466,7 +471,8 @@ for(dat_it in dat_it_vec){
   base_final$resconfirmado <- modeloglmconfirmadonb$residuals
   base_final$resmorte <- modeloglmmortenb$residuals
   
-  #moranmortos <- moran.mc(modeloglmmortenb$residuals,neighbors,999)
+  moranmortos <- moran.mc(modeloglmmortenb$residuals,print(neighbors, zero.policy=TRUE)
+,999)
   
   
   
@@ -517,8 +523,8 @@ print(xtable::xtable(AICs_TOTAL_full_t),include.rownames=F)
 dat_it <-as.Date((unique(covidmun$date)))[1]
 paras_full <- NULL
 dat_it_vec <- as.Date((unique(covidmun$date)))
-dat_it_vec <- dat_it_vec[month(dat_it_vec)==4]
-dat_it_vec <- dat_it_vec [-2]
+dat_it_vec <- dat_it_vec[month(dat_it_vec)>=4]
+#dat_it_vec <- dat_it_vec [-2]
 dat_it<-dat_it_vec[1]  
 for(dat_it in dat_it_vec){
   base_final <- covidmun %>% #filter(place_type!="state")%>% 
@@ -549,23 +555,24 @@ for(dat_it in dat_it_vec){
     summarise(N=length(code_muni))
   
   modeloglmmortenb <-glm.nb(data= base_final, 
-                            deaths ~ dist + offset(log(npop2019)))
-  countreg::rootogram( modeloglmmortenb,main=paste0("Mortes-",dat_it))
-  distplot(base_final$deaths, type="nbinomial",main=paste0("Mortes-",dat_it))
+                            deaths ~ dist + tem_rodo_2+offset(log(npop2019)))
+  countreg::rootogram( modeloglmmortenb,main=paste0("Mortes-",as.Date(dat_it)))
+  distplot(base_final$deaths, type="nbinomial",main=paste0("Mortes-",as.Date(dat_it)))
   deviance(modeloglmmortenb)
-  hnp(modeloglmmortenb,main=paste0("Mortes-",dat_it))
-  
+  #hnp(modeloglmmortenb,main=paste0("Mortes-",as.Date(dat_it)))
+  #moranmortes <- moran.mc(modeloglmmortenb$residuals,neighbors,999)
   
   modeloglmconfirmadonb <-glm.nb(data= base_final, 
-                                 totalCases ~ dist +  offset(log(npop2019)))
+                                 totalCases ~ dist+ tem_rodo_2 +  offset(log(npop2019)))
   
-  countreg::rootogram(modeloglmconfirmadonb,main=paste0("Casos-",dat_it))
-  distplot(base_final$totalCases, type="nbinomial",main=paste0("Casos-",dat_it))
+  countreg::rootogram(modeloglmconfirmadonb,main=paste0("Casos-",as.Date(dat_it)))
+  distplot(base_final$totalCases, type="nbinomial",main=paste0("Casos-",as.Date(dat_it)))
   deviance(modeloglmconfirmadonb)
-  hnp(modeloglmconfirmadonb,main=paste0("Casos-",dat_it))
+  #hnp(modeloglmconfirmadonb,main=paste0("Casos-",as.Date(dat_it)))
+  #morancasos <- moran.mc(modeloglmconfirmadonb$residuals,neighbors,999)
+  
   
   a<-summary(modeloglmconfirmadonb)
-  
   paras <- a$coefficients %>% data.frame()
   paras$tipo_var <- rownames(paras)
   paras$aic <- a$aic
@@ -597,7 +604,7 @@ for(dat_it in dat_it_vec){
   paras$tipo <-  'morte'
   parastemp <- bind_rows(parastemp,paras)
   parastemp$data_ref <- dat_it
-  parastemp$moranmortos <- moranmortos$p.value
+ #parastemp$moranmortos <- moranmortos$p.value
   paras_full <- bind_rows(paras_full,parastemp)
   
 }
@@ -608,7 +615,7 @@ paras_full_t <-paras_full %>% unique()
 
 names(paras_full_t) <- c("estimativa","sd","z","pvalor",
                          "tipo_var","aic","theta","deviance","nulldeviance","twologlik",
-                         "q025","q975","q050","q950","tipo","data_ref","moran")
+                         "q025","q975","q050","q950","tipo","data_ref")#"moran")
 
 saveRDS(paras_full_t,paste0("resultados/estimativas",state.char,".rds"))
 
@@ -619,6 +626,9 @@ names(supp.labs) <-c("dist","tem_rodo_2","tem_rodo_1","tem_rodo")
 unique(paras_full_t$tipo_var)
 
 names(paras_full_t)
+
+
+paras_full_t <- paras_full_t %>% filter(data_ref<as.Date("2020-06-02"))
 ggplot()+
   # geom_ribbon(data=paras_full_t %>% filter(tipo_var!="(Intercept)") ,
   #             aes(x=as.Date(data_ref),
@@ -684,7 +694,7 @@ ggplot()+
 
 
 
-ggsave("resultados/BETAS.pdf",height = 8,width = 12)
+ggsave(paste0("resultados/BETAS_",state.char,".pdf"),height = 8,width = 12)
 
 
 paras_full_t_t <- paras_full_t %>%
@@ -709,7 +719,7 @@ ggplot()+
   scale_y_continuous(labels = function(x)paste0(round(x*100,0),"%"))
 
 
-ggsave("resultados/TAXA.pdf",
+ggsave(paste0("resultados/TAXA_",state.char,".pdf"),
        height = 8,
        width = 12)
 
@@ -718,10 +728,10 @@ tab1 <- paras_full_t %>%
   mutate(estimativap=ifelse(tipo_var=="(Intercept)",round(estimativa,1),
                             round(exp(estimativa),2))) %>%
   mutate(valor_tabela = ifelse(pvalor<0.01,paste0(estimativap,"***"),
-                               ifelse(pvalor<0.05,paste0(estimativap,"***"),
-                                      ifelse(pvalor<0.1,paste0(estimativap,"***"),
+                               ifelse(pvalor<0.05,paste0(estimativap,"**"),
+                                      ifelse(pvalor<0.1,paste0(estimativap,"*"),
                                              paste0(estimativap))))) %>%
-  mutate(valor_tabela = ifelse(moran<0.05,valor_tabela,paste0(valor_tabela,"+"))) %>%
+  #mutate(valor_tabela = ifelse(moran<0.05,valor_tabela,paste0(valor_tabela,"+"))) %>%
   mutate(varby = paste0(tipo_var,tipo))%>%
   dplyr::select(data_ref,varby,valor_tabela)%>%
   spread(key="varby",value="valor_tabela") 
@@ -814,8 +824,3 @@ a <- a %>% filter( place_type=="city" & (dt_polo==date |
   summarise(flag_data=max(flag_data),
             flag_confirmed=max(flag_confirmed),
             flag_pop=max(flag_pop))
-
-# RJ
-shapefile <- geobr::read_municipality(code_muni = 33)
-save(shapefile,file="bases\\shapefile.rda")
-shapefileuf <- geobr::read_state(code_state = 33)

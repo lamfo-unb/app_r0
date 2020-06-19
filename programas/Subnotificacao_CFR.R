@@ -2,7 +2,7 @@ library(readxl)
 library(dplyr)
 library(XLConnect)
 library(RCurl)
-
+library(tidyverse)
 
 
 ############################
@@ -27,28 +27,28 @@ library(RCurl)
 # }
 #saveRDS(pop2020.UF,file="pop2020.UF.RDS")
 
-pop2020.UF<-  readRDS("pop2020.UF.RDS")
+pop2020.UF<-  readRDS("bases/pop2020.UF.RDS")
 
 
 #População Korea: http://data.un.org/Data.aspx?d=POP&f=tableCode%3A22
-pop.Korea <- read.csv("UNdata_Export_20200508_095240534.csv") %>% filter(grepl("-",Age) & Sex=="Both Sexes" ) %>%
+pop.Korea <- read.csv("bases/UNdata_Export_20200508_095240534.csv") %>% filter(grepl("-",Age) & Sex=="Both Sexes" ) %>%
               mutate(Faixa_Etaria.id= c(rep(1,3),rep(2:8,each=2),rep(9,4))) %>% group_by(Faixa_Etaria.id) %>%
               summarise(pop.Korea.2019 = sum(Value)) %>% ungroup() %>% mutate(percent.pop.Korea=pop.Korea.2019/sum(pop.Korea.2019))
 
 #População Itália 
-pop.Italy <- read.csv("UNdata_Export_20200519_003338514.csv") %>% filter(grepl("-",Age) & Sex=="Both Sexes" ) %>%
+pop.Italy <- read.csv("bases/UNdata_Export_20200519_003338514.csv") %>% filter(grepl("-",Age) & Sex=="Both Sexes" ) %>%
   mutate(Faixa_Etaria.id= c(rep(1,3),rep(2:8,each=2),rep(9,6))) %>% group_by(Faixa_Etaria.id) %>%
   summarise(pop.Italy.2018 = sum(Value)) %>% ungroup() %>% mutate(percent.pop.Italy=pop.Italy.2018/sum(pop.Italy.2018))
 
 
 ### CFR KOREA 
 # https://europepmc.org/article/med/32233163#
-CFR.korea <- read_xlsx("CFR.KOREA.xlsx")
+CFR.korea <- read_xlsx("bases/CFR.KOREA.xlsx")
 V.B <- crossprod(pop.Korea$percent.pop.Korea,CFR.korea$CFR)
 
 ### CFR ITALY 
 # https://europepmc.org/article/med/32233163#
-CFR.italy <- read_xlsx("CFR.ITALIA.xlsx")
+CFR.italy <- read_xlsx("bases/CFR.ITALIA.xlsx")
 V.B.IT <- crossprod(pop.Italy$percent.pop.Italy,CFR.italy$CFR)
 
 
@@ -58,14 +58,15 @@ vtb.ff <- function(x,base2,V.B=V.B){
   V.TB <- V.T/V.B 
   return(V.TB)
 }
-Vtb.UF <- data.frame(VTB=sapply(pop2020.UF, vtb.ff,base2=CFR.korea,V.B=V.B))
-Vtb.UF$state <- row.names(Vtb.UF)
-saveRDS( Vtb.UF,file = "Vtb.UF.SK.RDS")
+#Vtb.UF <- data.frame(VTB=sapply(pop2020.UF, vtb.ff,base2=CFR.korea,V.B=V.B))
+#Vtb.UF$state <- row.names(Vtb.UF)
+#saveRDS( Vtb.UF,file = "Vtb.UF.SK.RDS")
+Vtb.UF.SK <- readRDS(file = "bases/Vtb.UF.SK.RDS")
 
-
-Vtb.UF.it <- data.frame(VTB=sapply(pop2020.UF, vtb.ff,base2=CFR.italy,V.B=V.B.IT))
-Vtb.UF.it $state <- row.names(Vtb.UF.it )
-saveRDS( Vtb.UF.it,file = "Vtb.UF.ITA.RDS")
+#Vtb.UF.it <- data.frame(VTB=sapply(pop2020.UF, vtb.ff,base2=CFR.italy,V.B=V.B.IT))
+#Vtb.UF.it $state <- row.names(Vtb.UF.it )
+#saveRDS( Vtb.UF.it,file = "Vtb.UF.ITA.RDS")
+Vtb.UF.ITA <- readRDS(file = "bases/Vtb.UF.ITA.RDS")
 
 
 
@@ -75,6 +76,14 @@ base.mun$state <- as.character(base.mun$state)
 base.mun$date <- as.Date(base.mun$date)
 base.mun$state <- ifelse(base.mun$state == "TOTAL", "BRASIL", base.mun$state)
 base.mun <- base.mun %>% filter(date!=max(date))
+base.mun <-  base.mun %>% mutate(is.last = max(date))
+
+base.mun.last <- base.mun%>% filter(is.last==1)
+base.mun.100 <- base.mun.last %>% filter(totalCases>100)
+base.SP <- base.mun.last %>% filter(state=="SP")
+
+hist(base.mun.100$deaths_by_totalCases,breaks = "fd")
+summary(base.mun.100$deaths_by_totalCases)
 
 #base estado
 base <- base.mun %>% select(date, state, totalCases, newCases, deaths, newDeaths) %>% 
@@ -82,26 +91,45 @@ base <- base.mun %>% select(date, state, totalCases, newCases, deaths, newDeaths
   mutate(CFR.obs = deaths/totalCases) %>% ungroup() %>% 
   left_join(base.mun %>% group_by(state) %>% summarise(firt.date=min(date)),by="state")
 
+# base <- base.mun %>% 
+#   left_join(base.mun %>% group_by(state) %>% summarise(firt.date=min(date)),by="state") %>%
+#   mutate(CFR.obs = deaths_by_totalCases)
+
 #correção número de casos
 CFR.KS.bb <-0.01635
 lag.days <- 12
-base.correct <- base %>% left_join(Vtb.UF,by="state" ) %>% filter(deaths>10) %>%
-                      mutate(totalCases.est.SK = deaths/(VTB*CFR.KS.bb),date.cases = date-lag.days) %>%  
+base.correct <- base %>% left_join(Vtb.UF.SK,by="state" ) %>% filter(deaths>10) %>%
+                      mutate(totalCases.est.SK = round(deaths/(VTB*CFR.KS.bb)),date.cases = date-lag.days) %>%  
                       arrange(state,date.cases)%>%group_by(state) %>%
                       mutate(newCases.est.SK=totalCases.est.SK-lag(totalCases.est.SK)) %>%
                       select(date.cases,state,totalCases.est.SK,newCases.est.SK,VTB)
 #correção número de casos Itália
 CFR.ITA.bb <-0.134
 lag.days <- 12
-base.correct.2 <- base %>% left_join(Vtb.UF.it,by="state" ) %>% filter(deaths>10) %>%
-  mutate(totalCases.est.ITA = deaths/(VTB*CFR.ITA.bb),date.cases = date-lag.days) %>%  
+base.correct.2 <- base %>% left_join(Vtb.UF.ITA,by="state" ) %>% filter(deaths>10) %>%
+  mutate(totalCases.est.ITA = round(deaths/(VTB*CFR.ITA.bb)),date.cases = date-lag.days) %>%  
   arrange(state,date.cases)%>%group_by(state) %>%
-  mutate(newCases.est.ITA=totalCases.est.ITA-lag(totalCases.est.ITA)) %>%
+  mutate(newCases.est.ITA=round(totalCases.est.ITA-lag(totalCases.est.ITA))) %>%
   select(date.cases,state,totalCases.est.ITA,newCases.est.ITA,VTB)
 
 
 
 base <- base%>% left_join(base.correct, by=c("date"="date.cases","state"="state")) %>%
-  left_join(base.correct.2, by=c("date"="date.cases","state"="state")) %>%  arrange(state,date) %>%
-  mutate(totalCases.est = sqrt(totalCases.est.ITA*totalCases.est.SK),newCases.est = totalCases.est-lag(totalCases.est))
+  left_join(base.correct.2, by=c("date"="date.cases","state"="state"))
 
+base_long <- base %>% na.exclude() %>% gather(key="variavel",value="valor",-date,-state)
+
+state.cr="BRASIL"
+vars.cr =  c("totalCases", "totalCases.est.SK","totalCases.est.ITA")
+base_long.plot <- base_long %>% filter(state==state.cr & variavel %in% vars.cr) %>% na.omit()
+
+
+ggplot(base_long.plot %>% na.exclude(), aes(x=date,y=log(valor), fill=variavel,colour=variavel))+geom_line()+
+  labs(color=NULL)+xlab("Data") + ylab("log(Estimativa)")+
+  scale_colour_manual(values=c("red","blue","green"),
+                      breaks=c("totalCases.est.SK","totalCases.est.ITA","totalCases"),
+                      labels=c("Estimativa Coréia","Estimativa Itália","Observado"))
+
+ggsave(paste0("resultados/CFR_",state.cr,".pdf"),
+       height = 8,
+       width = 12)
