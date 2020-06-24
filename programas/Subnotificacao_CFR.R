@@ -1,4 +1,5 @@
 library(readxl)
+library(data.table)
 library(dplyr)
 library(XLConnect)
 library(RCurl)
@@ -7,12 +8,35 @@ library(tidyverse)
 
 ############################
 ### Subnotificação COVID 19
-## By. AleX R.
+## By. AleX 
 
 #####
 ##https://www.medrxiv.org/content/10.1101/2020.03.14.20036178v2.article-metrics
 ##https://ciis.fmrp.usp.br/covid19-subnotificacao/
 
+#Análise Descritiva
+
+covid.world <- read_xlsx("bases/COVID-19-World.xlsx")
+
+covid.world <- covid.world  %>% rename(newdeaths= deaths, date = dateRep) %>% arrange(geoId,date) %>% 
+  as.data.table()
+
+
+covid.world[,totalCases := cumsum(cases),by=c("geoId")]
+covid.world[,deaths := cumsum(newdeaths),by=c("geoId")]
+covid.world[,CFR := deaths/totalCases,by=c("geoId")]
+
+
+covid.world.plot <-  covid.world %>% filter(date>as.Date("2020-01-31") & geoId %in% c("BR","IT","KR","US","UK","DE"))
+ggplot(covid.world.plot, aes(x=date,y=CFR, fill=geoId, colour=geoId)) + geom_line()+
+  labs(colour="País:")+xlab("Data") + ylab("Taxa de Letalidade")+
+  scale_colour_manual(values=c("green","blue","red","darkblue","darkred","darkgreen"),
+                      breaks=c("BR","DE","IT","KR","UK","US"),
+                      labels=c("Brasil","Alemanha","Itália","Coréia do Sul","Reino Unido","Estados Unidos"))
+
+ggsave(paste0("resultados/CFR_world.pdf"),
+       height = 8,
+       width = 12)
 
 #Manipulação Base
 #names.sheet <- excel_sheets(path = "projecoes_2018_populacao_IBGE.xls")
@@ -96,7 +120,7 @@ base <- base.mun %>% select(date, state, totalCases, newCases, deaths, newDeaths
 #   mutate(CFR.obs = deaths_by_totalCases)
 
 #correção número de casos
-CFR.KS.bb <-0.01635
+CFR.KS.bb <-0.022
 lag.days <- 12
 base.correct <- base %>% left_join(Vtb.UF.SK,by="state" ) %>% filter(deaths>10) %>%
                       mutate(totalCases.est.SK = round(deaths/(VTB*CFR.KS.bb)),date.cases = date-lag.days) %>%  
@@ -104,7 +128,7 @@ base.correct <- base %>% left_join(Vtb.UF.SK,by="state" ) %>% filter(deaths>10) 
                       mutate(newCases.est.SK=totalCases.est.SK-lag(totalCases.est.SK)) %>%
                       select(date.cases,state,totalCases.est.SK,newCases.est.SK,VTB)
 #correção número de casos Itália
-CFR.ITA.bb <-0.134
+CFR.ITA.bb <-0.145
 lag.days <- 12
 base.correct.2 <- base %>% left_join(Vtb.UF.ITA,by="state" ) %>% filter(deaths>10) %>%
   mutate(totalCases.est.ITA = round(deaths/(VTB*CFR.ITA.bb)),date.cases = date-lag.days) %>%  
@@ -119,7 +143,7 @@ base <- base%>% left_join(base.correct, by=c("date"="date.cases","state"="state"
 
 base_long <- base %>% na.exclude() %>% gather(key="variavel",value="valor",-date,-state)
 
-state.cr="BRASIL"
+state.cr="RJ"
 vars.cr =  c("totalCases", "totalCases.est.SK","totalCases.est.ITA")
 base_long.plot <- base_long %>% filter(state==state.cr & variavel %in% vars.cr) %>% na.omit()
 

@@ -1,5 +1,5 @@
 ---
-title: 'COVID-19 no Brasil: Número Reprodução Instantâneo.'
+title: 'COVID-19 no Brasil: Número de Reprodução Instantâneo.'
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
@@ -229,6 +229,21 @@ checkboxInput("checkbox", label = "Com correção para subnotificação", value 
 tableOutput("table.R0")
 
 ```
+
+### Nota
+
+Esta sessão apresenta a estimativa de $R_t$, número esperado de casos secundários decorrentes de um caso primário infectado no momento $t$, por Unidade da Federação do Brasil, bem como estimativa do número básico de reprodução $R_0$. Utilizou-se uma abordagem Bayesiana com método de regressão de Poisson com priori Gamma para geração do tempo e janelas rolantes de 5 e 15 dias. Para mais detalhes, ver Cori et al. (2013).
+
+Aplicou-se uma correção para subnotificações baseada no estudo de Lachmann, A. (2020). Trata-se da estimação do número acumulado de casos exclusivamente a partir do número acumulado de mortes, utilizando como referência um país que comprovadamente apresentou uma boa capacidade de testagem. A Coréia do Sul foi utilizada como referência neste caso. 
+
+
+*Referências*:
+
+- Cori, A., Ferguson, N. M., Fraser, C., & Cauchemez, S. (2013). A new framework and software to estimate time-varying reproduction numbers during epidemics. American journal of epidemiology, 178(9), 1505-1512.
+
+- Lachmann, A. (2020). Correcting under-reported COVID-19 case numbers. medRxiv.
+
+
 
 ```{r , echo = FALSE }
  Rt.state <- reactive({

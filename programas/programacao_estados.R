@@ -525,7 +525,7 @@ paras_full <- NULL
 dat_it_vec <- as.Date((unique(covidmun$date)))
 dat_it_vec <- dat_it_vec[month(dat_it_vec)>=4]
 #dat_it_vec <- dat_it_vec [-2]
-dat_it<-dat_it_vec[1]  
+dat_it<-dat_it_vec[10]  
 for(dat_it in dat_it_vec){
   base_final <- covidmun %>% #filter(place_type!="state")%>% 
     arrange(ibgeID,date) %>% as.data.table()
@@ -541,12 +541,13 @@ for(dat_it in dat_it_vec){
     dplyr::select(X,Y,code_muni,tem_rodo,tem_rodo_1,tem_rodo_2,dist,densidade,npop2019,area)  %>%
     left_join(base_final %>%
                 filter(date==dat_it) %>%
-                dplyr::select(ibgeID,deaths,totalCases,maxconfirmed),
+                dplyr::select(ibgeID,deaths,totalCases,maxconfirmed,newCases,newDeaths,newCases),
               by = c("code_muni"="ibgeID")) %>%
     mutate(capital = ifelse(code_muni==codspcity,1,0),
            totalCases = ifelse(is.na(totalCases),0,totalCases),
            deaths = ifelse(is.na(deaths),0,deaths)) %>%
-    filter(code_muni!=cod.capital)
+    filter(code_muni!=cod.capital) %>% mutate(newDeaths = ifelse(newDeaths<0,0,newDeaths),
+                                              newCases = ifelse(newCases<0,0,newCases))
   
   
   
@@ -555,18 +556,18 @@ for(dat_it in dat_it_vec){
     summarise(N=length(code_muni))
   
   modeloglmmortenb <-glm.nb(data= base_final, 
-                            deaths ~ dist + tem_rodo_2+offset(log(npop2019)))
+                            newDeaths ~ dist + tem_rodo_2+offset(log(npop2019)))
   countreg::rootogram( modeloglmmortenb,main=paste0("Mortes-",as.Date(dat_it)))
-  distplot(base_final$deaths, type="nbinomial",main=paste0("Mortes-",as.Date(dat_it)))
+  distplot(base_final$newDeaths, type="nbinomial",main=paste0("Mortes-",as.Date(dat_it)))
   deviance(modeloglmmortenb)
   #hnp(modeloglmmortenb,main=paste0("Mortes-",as.Date(dat_it)))
   #moranmortes <- moran.mc(modeloglmmortenb$residuals,neighbors,999)
   
   modeloglmconfirmadonb <-glm.nb(data= base_final, 
-                                 totalCases ~ dist+ tem_rodo_2 +  offset(log(npop2019)))
+                                 newCases ~ dist+ tem_rodo_2 +  offset(log(npop2019)))
   
   countreg::rootogram(modeloglmconfirmadonb,main=paste0("Casos-",as.Date(dat_it)))
-  distplot(base_final$totalCases, type="nbinomial",main=paste0("Casos-",as.Date(dat_it)))
+  distplot(base_final$newCases, type="nbinomial",main=paste0("Casos-",as.Date(dat_it)))
   deviance(modeloglmconfirmadonb)
   #hnp(modeloglmconfirmadonb,main=paste0("Casos-",as.Date(dat_it)))
   #morancasos <- moran.mc(modeloglmconfirmadonb$residuals,neighbors,999)
