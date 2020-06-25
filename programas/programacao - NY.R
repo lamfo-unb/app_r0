@@ -40,14 +40,17 @@ library(gridExtra)
 # library(sf)
 
 
+
 # READ FILES ----
-# última atualização 14/04/2020
-covidmun <- read.csv("bases/EUA/us-counties.csv")
+# última atualização 25/06/2020
+covidmun <- read.csv( "bases\\us-counties.csv")
 covidmun <-  covidmun %>% 
   mutate(fips=ifelse(county=="New York City",36061,fips)) %>%
   filter(trunc(fips/1000) %in% c(36,9,34,42))
 
-shapefile  <- read_sf(dsn = "bases/EUA/tl_2017_us_county", layer = "tl_2017_us_county")
+ 
+
+shapefile  <- read_sf(dsn = "C:\\Users\\ACER\\Documents\\ACADEMICO\\ARTIGOS\\subnotificacaocovid19\\bases/EUA/tl_2017_us_county", layer = "tl_2017_us_county")
 shapefile <- shapefile %>% filter(STATEFP %in% c("09","34","36","42"))
 
 
@@ -60,6 +63,7 @@ no_axis <- theme(axis.title=element_blank(),
 
 covidmun_t <- covidmun %>%
   mutate(date=(date %>% as.character() %>% as.Date))
+
 covidmun_t <- covidmun_t %>% filter(date==max(covidmun_t$date))
 shapefileny <- shapefile %>%
   mutate(fips=as.numeric(GEOID)) %>%
@@ -94,14 +98,14 @@ ggplot() +
 
 # ShapeRodovias ----
 #S1100: Primary roads;  S1200:Secondary roads 
-shprodovias <- read_sf(dsn = "bases/EUA/tl_2013_36_prisecroads", 
+shprodovias <- read_sf(dsn = "C:\\Users\\ACER\\Documents\\ACADEMICO\\ARTIGOS\\subnotificacaocovid19\\bases/EUA/tl_2013_36_prisecroads", 
                        layer = "tl_2013_36_prisecroads") 
 shprodovias <- rbind(shprodovias,
-                     read_sf(dsn = "bases/EUA/tl_2013_34_prisecroads",
+                     read_sf(dsn = "C:\\Users\\ACER\\Documents\\ACADEMICO\\ARTIGOS\\subnotificacaocovid19\\bases/EUA/tl_2013_34_prisecroads",
                              layer = "tl_2013_34_prisecroads"),
-                     read_sf(dsn = "bases/EUA/tl_2013_09_prisecroads",
+                     read_sf(dsn = "C:\\Users\\ACER\\Documents\\ACADEMICO\\ARTIGOS\\subnotificacaocovid19\\bases/EUA/tl_2013_09_prisecroads",
                              layer = "tl_2013_09_prisecroads"),
-                     read_sf(dsn = "bases/EUA/tl_2013_42_prisecroads",
+                     read_sf(dsn = "C:\\Users\\ACER\\Documents\\ACADEMICO\\ARTIGOS\\subnotificacaocovid19\\bases/EUA/tl_2013_42_prisecroads",
                              layer = "tl_2013_42_prisecroads"))
 
 # a <- read_sf(dsn="bases/EUA/tl_2013_36_prisecroads",layer="tl_2013_36_prisecroads")
@@ -184,7 +188,7 @@ shapefileny <- shapefileny %>% mutate(tem_rodo_1= ifelse(GEOID %in% lista_fips_s
 
 
 ggplot() +
-  geom_sf(data=shapefileny %>% filter(tem_rodo_1==1),color = "gray85",
+  geom_sf(data=shapefileny,color = "gray85",
           aes(fill=(deaths)),size=.05) +
   scale_fill_distiller(palette = "Blues",
                        name="Confirmed per Km²",
@@ -193,14 +197,72 @@ ggplot() +
   geom_sf(data=county.eua.ny,col="orange")+
   geom_sf(data=shprodoviasnyny ,col="red")
 
-# Loop modelo ----
 
-populacao <- read_excel("bases/EUA/co-est2019-annres.xlsx",skip = 3)
+populacao <- read_excel("bases/co-est2019-annres.xlsx",skip = 3)
 
 populacao <- populacao %>%
   mutate(nomes = gsub(".(.*) County.*","\\1",`...1`),
          state=gsub(".(.*) County, (.*)","\\2",`...1`)) %>%
   mutate(Npop = `2010`)
+
+
+
+
+
+
+
+ddates <- c("2020-04-01","2020-05-01","2020-06-01")
+dd <- "2020-06-01"
+for(dd in ddates){
+  
+  shapefilenymapa <- shapefileny%>%
+    left_join(populacao %>% select(nomes,state,Npop),
+              by=c("county"="nomes",
+                   'state'="state"))
+  
+  covidmun_t_t <- covidmun %>%
+    mutate(date=(date %>% as.character() %>% as.Date)) %>%
+    filter(date==dd) %>%
+    rename("ncases"="cases")
+    
+  shapefilenymapa <- shapefilenymapa %>%
+    left_join(covidmun_t_t %>% select(fips,ncases),
+              by = "fips")
+  
+
+
+  
+mapa5<-ggplot() +
+  geom_sf(data=shapefilenymapa, color= "gray85", size=.15)+
+  geom_sf(data=shapefilenymapa,
+          aes(fill=(ncases/Npop)*10^5),size=.05,
+          color = ifelse(shapefilenymapa$GEOID %in% county.eua.ny$GEOID,
+                         "orange","gray85"))+
+  scale_fill_distiller(palette = "Blues",
+                       name="Confirmed per 100K",
+                       direction = 1) +
+  geom_sf(data=shprodoviasnyny ,col="red") +
+  geom_text(data = shapefilenymapa%>% filter(tem_rodo_1==1),
+            aes(X, Y, label = ncases) ,size = 1.1) +
+  labs(subtitle=paste0("Confirmed cases at ",format(as.Date(dd) , "%d-%b")), size=8)+
+  theme_minimal() 
+
+
+mapa5
+ggsave(paste0("resultados/NY_Casos_",gsub("-","_",dd),".pdf"),height = 8,width = 12)
+}
+
+
+
+# Loop modelo ----
+
+
+
+
+
+
+
+
 
 
 # populacao <- read_sf(dsn = "bases/EUA/NYS_Civil_Boundaries_SHP", layer = "Counties")
@@ -469,7 +531,7 @@ print(xtable::xtable(AICs_TOTAL_full_t),include.rownames=F)
 # Analise output parÂmetros ----
 
 paras_full_t <- paras_full_t %>%
-  filter(month(as.Date(data_ref))==4)  
+  filter(month(as.Date(data_ref))>3)  
 
 supp.labs <- c("Distância","Rodovia Primária","Rodovia secundária","Rodovia","Hospital")
 names(supp.labs) <-c("dist","tem_rodo_2","tem_rodo_1","tem_rodo","QTDE_Hospit")
