@@ -102,7 +102,7 @@ base.mun$state <- ifelse(base.mun$state == "TOTAL", "BRASIL", base.mun$state)
 base.mun <- base.mun %>% filter(date!=max(date))
 base.mun <-  base.mun %>% mutate(is.last = max(date))
 
-base.mun.last <- base.mun%>% filter(is.last==1)
+base.mun.last <- base.mun%>% filter(is.last==date)
 base.mun.100 <- base.mun.last %>% filter(totalCases>100)
 base.SP <- base.mun.last %>% filter(state=="SP")
 
@@ -143,11 +143,6 @@ base <- base%>% left_join(base.correct, by=c("date"="date.cases","state"="state"
 
 base_long <- base %>% na.exclude() %>% gather(key="variavel",value="valor",-date,-state)
 
-state.cr="RJ"
-vars.cr =  c("totalCases", "totalCases.est.SK","totalCases.est.ITA")
-base_long.plot <- base_long %>% filter(state==state.cr & variavel %in% vars.cr) %>% na.omit()
-
-
 ggplot(base_long.plot %>% na.exclude(), aes(x=date,y=log(valor), fill=variavel,colour=variavel))+geom_line()+
   labs(color=NULL)+xlab("Data") + ylab("log(Estimativa)")+
   scale_colour_manual(values=c("red","blue","green"),
@@ -157,3 +152,62 @@ ggplot(base_long.plot %>% na.exclude(), aes(x=date,y=log(valor), fill=variavel,c
 ggsave(paste0("resultados/CFR_",state.cr,".pdf"),
        height = 8,
        width = 12)
+
+
+vars.cr =  c("totalCases", "totalCases.est.SK","totalCases.est.ITA")
+base_long.plot <- base_long %>% filter(variavel %in% vars.cr) %>% na.omit()
+
+base_long.plot_relativo <- base_long.plot %>%
+  spread(key = "variavel",value="valor") %>%
+  mutate(IT = totalCases/totalCases.est.ITA-1,
+         SK = totalCases/totalCases.est.SK-1) %>%
+  select(date,state,IT,SK) %>%
+  gather(key = "variavel",value="valor",-date,-state)
+
+
+ufscd <- c('11','RO','12','AC','13','AM','14','RR','15','PA','16','AP','17','TO','21','MA','22','PI','23','CE','24','RN','25','PB','26','PE','27','AL','28','SE','29','BA','31','MG','32','ES','33','RJ','35','SP','41','PR','42','SC','43','RS','50','MS','51','MT','52','GO','53','DF')
+ufscd <- matrix(ufscd,ncol=2,byrow=T) %>% data.frame()
+names(ufscd) <- c("cod","ufnome")  
+ufscd <- ufscd %>%
+  mutate(regiao = substr(cod,1,1))
+
+
+library(lubridate)
+
+base_long.plot_relativo <- base_long.plot_relativo %>%
+  left_join(ufscd,by = c("state"="ufnome"))
+
+
+
+
+# New facet label names for dose variable
+dose.labs <- c("Norte", "Sul", "Centro-Oeste","Nordeste","Sudeste")
+names(dose.labs) <- c("1", "4", "5","2","3")
+
+# New facet label names for supp variable
+supp.labs <- c("Padrão Itália", "Padrão Coréia do Sul")
+names(supp.labs) <- c("IT", "SK")
+
+
+
+
+ggplot()+
+  geom_line(data = base_long.plot_relativo %>% na.exclude(), aes(x=date,y=valor, 
+                                                          fill=state,
+                                                          colour=state),alpha=.4)+
+  geom_text(data = base_long.plot_relativo %>% na.exclude() %>% filter((day(date)%%10)==1), 
+            mapping = aes(x=date,y=valor, 
+                fill=state,
+                colour=state,
+                label = state),cex=2)+
+  labs(color=NULL)+xlab("Data") + ylab("Relativo") +
+  facet_grid(variavel~regiao,scale="free", 
+             labeller = labeller(regiao = dose.labs, 
+                                 variavel = supp.labs))+
+  theme(legend.position = "none") +
+  scale_y_continuous(labels= function(x) paste0(x*100,"%")) +
+  geom_hline(yintercept = 0,linetype=2,col="gray60")+ scale_x_date(date_labels = "%b") 
+
+ggsave(paste0("resultados/CFR_geral.pdf"),
+       height =6 ,
+       width = 10)
