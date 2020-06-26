@@ -533,7 +533,7 @@ print(xtable::xtable(AICs_TOTAL_full_t),include.rownames=F)
 paras_full_t <- paras_full_t %>%
   filter(month(as.Date(data_ref))>3)  
 
-supp.labs <- c("Distância","Rodovia Primária","Rodovia secundária","Rodovia","Hospital")
+supp.labs <- c("Distância","Rodovia Primária","Rodovia","Rodovia","Hospital")
 names(supp.labs) <-c("dist","tem_rodo_2","tem_rodo_1","tem_rodo","QTDE_Hospit")
 
 unique(paras_full_t$tipo_var)
@@ -602,7 +602,7 @@ ggsave("resultados/TAXA_NY.pdf",
        height = 8,
        width = 12)
 
-tab1 <- paras_full_t %>%
+    tab1 <- paras_full_t %>%
   mutate(estimativap=ifelse(tipo_var=="(Intercept)",round(estimativa,1),
                             round(exp(estimativa),2))) %>%
   mutate(valor_tabela = ifelse(pvalor<0.01,paste0(estimativap,"***"),
